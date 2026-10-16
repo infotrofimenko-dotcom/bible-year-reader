@@ -13,6 +13,8 @@ __pycache__/
 
 # Runtime identity, credentials, backups and deployment settings
 local-host-id.json
+state.json
+state.json.*.tmp
 .env
 .env.*
 *.pem

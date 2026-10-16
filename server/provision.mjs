@@ -4,12 +4,13 @@ import http from 'node:http';
 import {spawn} from 'node:child_process';
 import {parseArgs} from 'node:util';
 import {signIn} from './setup.mjs';
-const {values}=parseArgs({options:{host:{type:'string'},identity:{type:'string'},'known-hosts':{type:'string'},origin:{type:'string'}}});
+const {values}=parseArgs({options:{host:{type:'string'},identity:{type:'string'},'known-hosts':{type:'string'},origin:{type:'string'},'client-id':{type:'string'}}});
 if(!/^[a-zA-Z0-9_.@-]+$/.test(values.host||'')||new URL(values.origin).protocol!=='https:'||new URL(values.origin).origin!==values.origin||!values.identity||!values['known-hosts'])throw Error('Explicit SSH host, identity, known-hosts and HTTPS origin required');
 const args=['-o','BatchMode=yes','-o','StrictHostKeyChecking=yes','-o','IdentitiesOnly=yes','-o','ConnectTimeout=15','-i',values.identity,'-o','UserKnownHostsFile='+values['known-hosts'],values.host];
 function ssh(command,input=''){return new Promise((resolve,reject)=>{let output='',error='';const child=spawn('ssh',[...args,command],{stdio:['pipe','pipe','pipe'],windowsHide:true});child.stdout.on('data',data=>output+=data);child.stderr.on('data',data=>error+=data);child.on('error',()=>reject(Error('SSH unavailable')));child.on('close',code=>code===0?resolve(output.trim()):reject(Error('VM provisioning failed; check the service without logging credentials')));child.stdin.on('error',()=>{});child.stdin.end(input);});}
 const remote='/opt/bible-year-node/current/bin/node /opt/bible-year/current/server/admin.mjs';
 const registration=JSON.parse(await ssh('runuser -u bible-year -- '+remote+' registration')),hostId=registration.hostId;if(!/^urn:uuid:[0-9a-f-]{36}$/.test(hostId))throw Error('Invalid VM host identity');
+if(values['client-id']){if(!/^oaiapp_[A-Za-z0-9_-]+$/.test(values['client-id'])||(registration.clientId&&registration.clientId!==values['client-id']))throw Error('Mismatched saved registration');registration.clientId=values['client-id'];}
 let started=false,complete=false,failed=false;
 const local='http://127.0.0.1:8769';
 const server=http.createServer(async(req,res)=>{
