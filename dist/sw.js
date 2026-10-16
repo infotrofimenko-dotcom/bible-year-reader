@@ -1,4 +1,4 @@
-const VERSION='20261016-3',BASE=new URL('./',self.location.href).href,NS='bible-year@'+new URL(BASE).pathname+'@',SHELL=NS+'shell-'+VERSION,META=NS+'metadata',POINTER=new URL('offline-library',BASE).href;
+const VERSION='20261016-4',BASE=new URL('./',self.location.href).href,NS='bible-year@'+new URL(BASE).pathname+'@',SHELL=NS+'shell-'+VERSION,META=NS+'metadata',POINTER=new URL('offline-library',BASE).href;
 const SHELL_FILES=['./','index.html','style.css','app.js','model.mjs','manifest.webmanifest','icon.svg','icon-192.png','icon-512.png'];
 const DATA_FILES=['data/plan.json','data/library.json'];
 self.addEventListener('install',event=>event.waitUntil((async()=>{const cache=await caches.open(SHELL);await cache.addAll(SHELL_FILES.map(p=>new URL(p,BASE).href));await self.skipWaiting();})()));
