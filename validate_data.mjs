@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';import fs from 'node:fs/promises';import {createHash} from 'node:crypto';import {readingVerses,PLAN_ID} from './dist/model.mjs';
+const plan=JSON.parse(await fs.readFile(new URL('./dist/data/plan.json',import.meta.url))),raw=await fs.readFile(new URL('./dist/data/library.json',import.meta.url)),library=JSON.parse(raw);
+assert.equal(plan.planId,PLAN_ID);assert.equal(plan.days.length,365);assert.deepEqual(plan.days.map(d=>d.number),Array.from({length:365},(_,i)=>i+1));assert.equal(createHash('sha256').update(raw).digest('hex'),plan.librarySha256);
+const ids=new Set(),coverage=new Map();let count=0;
+for(const day of plan.days){assert.equal(day.status,'ready');assert.ok(day.readings.length);for(const [index,r]of day.readings.entries()){
+ assert.equal(r.id,`d${String(day.number).padStart(3,'0')}-r${String(index).padStart(2,'0')}`);assert.ok(!ids.has(r.id));ids.add(r.id);assert.ok(r.source.startsWith('https://lib.izuchaem-bibliu.ru/#'));const verses=readingVerses(r,library);assert.ok(verses.length);count+=verses.length;
+ for(const v of verses){assert.ok(v.text.trim());const key=r.book+'.'+v.chapter;if(!coverage.has(key))coverage.set(key,new Set());coverage.get(key).add(v.number);}
+}}
+for(const [key,verses]of Object.entries(library.chapters)){assert.deepEqual(verses.map(v=>v.number),Array.from({length:verses.length},(_,i)=>verses[0].number+i),key+' has missing/duplicate numbers');assert.ok(verses.every(v=>typeof v.text==='string'&&v.text.length>0));}
+assert.deepEqual(plan.days[0].readings.map(r=>r.reference),['Быт.1','Быт.2','Мф.1','Пс.1']);assert.deepEqual(plan.days[364].readings.map(r=>r.reference),['Плач.5','Откр.22','Мл.4']);
+assert.deepEqual(plan.days[35].readings[0].end,[46,27]);assert.deepEqual(plan.days[63].readings.find(r=>r.book==='Мк').end,[9,1]);assert.deepEqual(plan.days[332].readings.find(r=>r.book==='Евр').end,[6,12]);
+assert.equal(library.chapters['Деян.19'].at(-1).number,41);assert.equal(library.chapters['Деян.19'].at(-1).text,'Сказав это, он распустил собрание.');const mal=plan.days[362].readings.find(r=>r.book==='Мл');assert.deepEqual(mal.sourceEnd,[4,7]);assert.deepEqual(mal.end,[4,6]);assert.ok(mal.sourceIssue);
+const partial=[];for(const [key,verses]of Object.entries(library.chapters)){const missing=verses.filter(v=>v.number>0&&!coverage.get(key)?.has(v.number)).map(v=>v.number);if(missing.length)partial.push({chapter:key,unassignedVerses:missing});}
+const books=new Map();for(const key of Object.keys(library.chapters)){const [book,c]=key.split('.');if(!books.has(book))books.set(book,new Set());books.get(book).add(Number(c));}const chapterGaps=[];for(const [book,set]of books){for(let c=1;c<=Math.max(...set);c++)if(!set.has(c))chapterGaps.push(book+'.'+c);}
+const report={days:365,passages:ids.size,chapters:Object.keys(library.chapters).length,assignedVerseOccurrences:count,sourceChapterGaps:chapterGaps,sourceVerseGaps:partial};await fs.writeFile(new URL('./validation-report.json',import.meta.url),JSON.stringify(report,null,2));console.log(JSON.stringify(report));

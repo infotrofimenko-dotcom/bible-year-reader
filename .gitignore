@@ -1,0 +1,27 @@
+# Private source material and generated third-party data
+/source-cache/
+/dist/data/
+*-report.json
+*.pdf
+*.eml
+*.mbox
+*.msg
+*.zip
+*.log
+__pycache__/
+*.pyc
+
+# Runtime identity, credentials, backups and deployment settings
+local-host-id.json
+.env
+.env.*
+*.pem
+*.key
+*credentials*.json
+*token*.json
+*session*.json
+*backup*.json
+/deploy/
+/node_modules/
+.DS_Store
+Thumbs.db

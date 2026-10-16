@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#244b42">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Библия за год">
+  <meta name="description" content="Ваш план чтения Библии: тексты внутри, сохранение места и отметки прочитанного. Читайте в своём темпе.">
+  <meta name="robots" content="noindex,nofollow">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./icon-192.png">
+  <link rel="stylesheet" href="./style.css">
+  <title>Библия за год · Ваше чтение</title>
+</head>
+<body>
+  <a class="skip" href="#main">Перейти к содержанию</a>
+  <header class="app-header"><a href="#home" class="brand"><span class="brand-icon" aria-hidden="true">365</span><span>Библия за год<small>Один день. Один шаг.</small></span></a><button class="icon-button" id="install-help" aria-label="Как установить приложение">?</button></header>
+  <main id="main" tabindex="-1"><div class="empty"><h1>Открываем Библию</h1><p>Загружаем ваш план чтения…</p></div></main>
+  <nav id="navigation" class="navigation" aria-label="Основные разделы"></nav>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <dialog id="help-dialog"><button class="dialog-close" data-close aria-label="Закрыть">×</button><span class="eyebrow">ВСЕГДА ПОД РУКОЙ</span><h2>Добавьте на экран телефона</h2><p><strong>iPhone:</strong> откройте сайт в Safari → «Поделиться» → «На экран Домой» → «Добавить».</p><p><strong>Android:</strong> откройте сайт в Chrome → меню ⋮ → «Установить и создать ярлык» → «Установить».</p><p>Откройте приложение через новый значок. Затем в «Настройках» нажмите «Сохранить для чтения без интернета» и дождитесь подтверждения.</p><p class="muted">Отметки хранятся на этом устройстве. Для переноса или сохранности используйте резервную копию в настройках.</p><button class="primary wide" data-close>Понятно</button></dialog>
+  <dialog id="confirm-dialog"><h2 id="confirm-title"></h2><p id="confirm-text"></p><div class="button-row"><button class="secondary" data-cancel>Отмена</button><button class="primary" id="confirm-action">Подтвердить</button></div></dialog>
+  <noscript>Для чтения и сохранения отметок включите JavaScript в браузере.</noscript>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

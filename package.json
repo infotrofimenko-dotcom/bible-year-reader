@@ -1,0 +1,14 @@
+{
+  "name": "bible-year-reader",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Personal Bible reading PWA with progress tracking and local ChatGPT explanations",
+  "license": "MIT",
+  "type": "module",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "start": "node server/preview.mjs",
+    "test": "node --test test_core.mjs && node test_offline.mjs",
+    "validate:data": "node validate_data.mjs"
+  }
+}
